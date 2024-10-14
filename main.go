@@ -10,7 +10,7 @@ import (
 
 func main() {
 	router := mux.NewRouter()
-	router.HandleFunc("/process", handlers.HandleProcess).Methods("POST") // Specify method if applicable
+	router.HandleFunc("/process", handlers.HandleProcess).Methods("POST")
 
 	srv := &http.Server{
 		Addr:    ":8080",
