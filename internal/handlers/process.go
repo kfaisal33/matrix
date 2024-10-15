@@ -1,12 +1,13 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 
-	"go-league-challenge/models"
-	"go-league-challenge/utils"
+	"github.com/rs/zerolog/log"
+
+	"go-league-challenge/internal/models"
+	"go-league-challenge/pkg/utils"
 )
 
 const (
@@ -20,6 +21,7 @@ const (
 // HandleProcess processes the CSV file based on the action specified in the query parameters
 func HandleProcess(w http.ResponseWriter, r *http.Request) {
 	action := r.URL.Query().Get("action")
+	log.Info().Str("action", action).Msg("Processing action")
 	records, err := utils.ParseCSVFile(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -41,12 +43,12 @@ func HandleProcess(w http.ResponseWriter, r *http.Request) {
 		response = strconv.Itoa(models.MultiplyMatrix(records))
 	default:
 		http.Error(w, "Invalid action", http.StatusBadRequest)
-		log.Printf("Invalid action: %s", action)
+		log.Warn().Str("action", action).Msg("Invalid action requested")
 		return
 	}
 
 	_, err = w.Write([]byte(response))
 	if err != nil {
-		log.Printf("Error writing response: %v", err)
+		log.Error().Err(err).Msg("Error writing response")
 	}
 }
